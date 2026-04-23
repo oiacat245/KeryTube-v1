@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Kerytube</title>
@@ -12,20 +12,14 @@
         
         .container { width: 900px; margin: 20px auto; display: flex; gap: 20px; }
         .main-player { width: 600px; }
-        .sidebar { width: 280px; border-left: 1px solid #eee; padding-left: 15px; }
+        .video-box { background: #000; width: 600px; height: 450px; display: flex; align-items: center; justify-content: center; }
+        video, audio { width: 100%; max-height: 450px; }
 
-        /* player estilo antigo */
-        video, audio { width: 100%; background: #000; border: 2px solid #999; }
+        .upload-section { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background: #f1f1f1; }
+        .upload-section h3 { margin: 0 0 10px 0; font-size: 14px; }
         
-        .video-info { margin-top: 15px; padding: 10px; background: #f9f9f9; border: 1px solid #ddd; }
-        .video-info h2 { margin: 0 0 10px 0; font-size: 18px; color: #333; }
-        
-        .upload-box { margin-top: 20px; padding: 15px; border: 2px dashed #ccc; background: #fffceb; }
-        .upload-box h3 { margin-top: 0; font-size: 14px; }
-        
-        .side-item { display: flex; gap: 10px; margin-bottom: 10px; }
-        .side-thumb { width: 80px; height: 60px; background: #444; }
-        .side-text { font-size: 11px; color: #0033cc; font-weight: bold; }
+        input[type="file"] { margin-bottom: 10px; }
+        .status { font-size: 12px; color: green; display: none; }
     </style>
 </head>
 <body>
@@ -33,47 +27,67 @@
     <div class="header">
         <div class="nav-top">
             <a href="index.html" class="logo">Kery<span>tube</span></a>
-            <div style="margin-left: auto; font-size: 12px;">
-                <b>oiacat245</b> | <a href="#">Upload</a> | <a href="#">Settings</a> | <a href="#">Logout</a>
-            </div>
+            <div style="margin-left: auto; font-size: 12px;"><b>oiacat245</b></div>
         </div>
     </div>
 
     <div class="container">
         <div class="main-player">
-            <video controls>
-                <source src="video.mp4" type="video/mp4">
-                seu navegador n suporta video.
-            </video>
-
-            <div class="video-info">
-                <h2>meu primeiro upload</h2>
-                <div style="font-size: 12px; color: #666;">
-                    <b>Added:</b> April 22, 2026 | <b>From:</b> oiacat245
-                </div>
-                <hr>
-                <p style="font-size: 12px;"><b>ouvir musica (wav/mp3):</b></p>
-                <audio controls>
-                    <source src="musica.wav" type="audio/wav">
-                    <source src="musica.mp3" type="audio/mpeg">
-                </audio>
+            <div class="video-box" id="playerContainer">
+                <p id="placeholder" style="color: white;">selecione um arquivo abaixo p/ reproduzir</p>
+                <video id="mainVideo" controls style="display:none;"></video>
+                <audio id="mainAudio" controls style="display:none;"></audio>
             </div>
 
-            <div class="upload-box">
-                <h3>como publicar?</h3>
-                <p style="font-size: 12px;">1. coloca teu arquivo <b>video.mp4</b> ou <b>musica.wav</b> na mesma pasta do github.<br>
-                2. o player vai puxar eles direto pelo nome.</p>
+            <div class="upload-section">
+                <h3>publicar no kerytube (mp4, mp3 ou wav)</h3>
+                <input type="file" id="fileInput" accept="video/mp4, audio/wav, audio/mpeg">
+                <br>
+                <button onclick="handleUpload()">publicar arquivo</button>
+                <p id="uploadStatus" class="status">arquivo publicado com sucesso!</p>
             </div>
         </div>
 
         <div class="sidebar">
-            <b style="font-size: 13px;">Related Videos</b>
-            <div class="side-item" style="margin-top:10px;">
-                <div class="side-thumb"></div>
-                <div class="side-text">windows longhorn test<br><span style="color:#666; font-weight:normal;">views: 102</span></div>
+            <div style="font-size: 12px; color: #666; width: 250px;">
+                <b>instruções:</b><br>
+                esse sistema carrega o arquivo direto da memória do teu pc. como o github pages n tem banco de dados, se tu der f5 o vídeo some, mas p/ testar o player e a interface, ele funciona 100% real.
             </div>
         </div>
     </div>
+
+    <script>
+        function handleUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const videoPlayer = document.getElementById('mainVideo');
+            const audioPlayer = document.getElementById('mainAudio');
+            const placeholder = document.getElementById('placeholder');
+            const status = document.getElementById('uploadStatus');
+
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("seleciona um arquivo primeiro!");
+                return;
+            }
+
+            const fileURL = URL.createObjectURL(file);
+            placeholder.style.display = 'none';
+
+            if (file.type.includes('video')) {
+                audioPlayer.style.display = 'none';
+                videoPlayer.style.display = 'block';
+                videoPlayer.src = fileURL;
+                videoPlayer.play();
+            } else if (file.type.includes('audio')) {
+                videoPlayer.style.display = 'none';
+                audioPlayer.style.display = 'block';
+                audioPlayer.src = fileURL;
+                audioPlayer.play();
+            }
+
+            status.style.display = 'block';
+        }
+    </script>
 
 </body>
 </html>
